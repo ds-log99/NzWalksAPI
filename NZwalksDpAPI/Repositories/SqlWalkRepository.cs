@@ -82,7 +82,6 @@ namespace NZwalksDpAPI.Repositories
                 .Include("Difficulty")
                 .Include("Region")
                 .FirstOrDefaultAsync(x => x.Id == id);
-
         }
 
         public async Task<Walk> UpdateAsync(Guid id, Walk walk)

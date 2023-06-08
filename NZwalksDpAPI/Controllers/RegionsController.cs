@@ -7,11 +7,13 @@ using NZwalksDpAPI.Models.Domain;
 using NZwalksDpAPI.Models.DTO;
 using NZwalksDpAPI.Repositories;
 using NZwalksDpAPI.CustomActionFilters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NZwalksDpAPI.Controllers
-{
+{ 
     [Route("api/[controller]")]
     [ApiController]
+ 
     public class RegionsController : ControllerBase
     {
         private readonly ApplicationDbContext db;
@@ -27,6 +29,7 @@ namespace NZwalksDpAPI.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAll() 
         {
              var regionsDomaain = await regionRepository.GetAllAsync();
@@ -36,6 +39,7 @@ namespace NZwalksDpAPI.Controllers
 
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var region = await regionRepository.GetByIdAsync(id);
@@ -48,6 +52,8 @@ namespace NZwalksDpAPI.Controllers
 
         [HttpPost]
         [ValidateModel]
+        [Authorize]
+        [Authorize(Roles = "Writter")]
         public async Task<IActionResult> Create([FromBody] CreateRegionDto addRegion)
         {  
                // map dto to domain model
@@ -63,6 +69,7 @@ namespace NZwalksDpAPI.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writter")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionDto updateRegion ) {
             if (ModelState.IsValid)
             {
@@ -79,21 +86,18 @@ namespace NZwalksDpAPI.Controllers
                 return Ok(regionDto);
             }
             else return BadRequest(ModelState);
-
-
         }
 
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writter")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-
             var regionModel = await regionRepository.DeleteAsync(id);            
             if (regionModel == null)
             {
                 return NotFound("Region Not found 404");
             }
-
             var regionDto = mapper.Map<RegionDto>(regionModel);
 
             return Ok(regionDto);
