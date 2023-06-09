@@ -8,6 +8,7 @@ using NZwalksDpAPI.Models.DTO;
 using NZwalksDpAPI.Repositories;
 using NZwalksDpAPI.CustomActionFilters;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 namespace NZwalksDpAPI.Controllers
 { 
@@ -19,22 +20,35 @@ namespace NZwalksDpAPI.Controllers
         private readonly ApplicationDbContext db;
         private readonly IRegionRepository regionRepository;
         private readonly IMapper mapper;
+        private readonly ILogger<RegionsController> logger;
 
-        public RegionsController(ApplicationDbContext _db, IRegionRepository regionRepository, IMapper mapper)
+        public RegionsController(ApplicationDbContext _db, IRegionRepository regionRepository, IMapper mapper, ILogger<RegionsController> logger)
         {
             this.db = _db;
             this.regionRepository = regionRepository;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
 
         [HttpGet]
-        [Authorize(Roles = "Reader")]
+        //[Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAll() 
         {
-             var regionsDomaain = await regionRepository.GetAllAsync();
+            try
+            {
+                throw new Exception("custom exception");
+                var regionsDomaain = await regionRepository.GetAllAsync();
 
-            return Ok(mapper.Map<List<RegionDto>>(regionsDomaain));
+                return Ok(mapper.Map<List<RegionDto>>(regionsDomaain));
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                throw;
+            }
+
         }
 
         [HttpGet]
