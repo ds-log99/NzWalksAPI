@@ -35,25 +35,14 @@ namespace NZwalksDpAPI.Controllers
         //[Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAll() 
         {
-            try
-            {
-                throw new Exception("custom exception");
-                var regionsDomaain = await regionRepository.GetAllAsync();
+            var regionsDomaain = await regionRepository.GetAllAsync();
 
-                return Ok(mapper.Map<List<RegionDto>>(regionsDomaain));
-
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, ex.Message);
-                throw;
-            }
-
+            return Ok(mapper.Map<List<RegionDto>>(regionsDomaain));
         }
 
         [HttpGet]
         [Route("{id:Guid}")]
-        [Authorize(Roles = "Reader")]
+     //   [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var region = await regionRepository.GetByIdAsync(id);
@@ -65,9 +54,9 @@ namespace NZwalksDpAPI.Controllers
         }
 
         [HttpPost]
-        [ValidateModel]
-        [Authorize]
-        [Authorize(Roles = "Writter")]
+      //  [ValidateModel]
+       // [Authorize]
+    //    [Authorize(Roles = "Writter")]
         public async Task<IActionResult> Create([FromBody] CreateRegionDto addRegion)
         {  
                // map dto to domain model
@@ -83,7 +72,7 @@ namespace NZwalksDpAPI.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
-        [Authorize(Roles = "Writter")]
+   //     [Authorize(Roles = "Writter")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionDto updateRegion ) {
             if (ModelState.IsValid)
             {
@@ -104,7 +93,7 @@ namespace NZwalksDpAPI.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
-        [Authorize(Roles = "Writter")]
+    //    [Authorize(Roles = "Writter")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var regionModel = await regionRepository.DeleteAsync(id);            
